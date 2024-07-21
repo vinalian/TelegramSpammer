@@ -1,0 +1,67 @@
+version: '3.1'
+services:
+  nginx:
+    image: nginx:latest
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./django-admin/static:/django-admin/static
+      - ./django-admin/media:/django-admin/media
+    ports:
+      - "80:80"
+    depends_on:
+      - django_admin
+
+  spammer:
+    build:
+      context: ./spammer
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    volumes:
+      - ./spammer:/spammer
+    command: >
+      sh -c "
+         supervisord -c supervisord.conf
+      "
+    depends_on:
+      - postgres
+      - redis
+      - django_admin
+
+  django_admin:
+    build:
+      context: ./django-admin
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    volumes:
+      - ./django-admin:/django-admin
+    command: >
+      sh -c "
+        python manage.py makemigrations &&
+        python manage.py migrate &&
+        (python manage.py createsuperuser --username admin2 --email admin@mail.ru --noinput || true) &&
+        python manage.py collectstatic --noinput &&
+        python start_service.py
+      "
+    ports:
+      - "8001:8001"
+    depends_on:
+      - postgres
+      - redis
+
+  postgres:
+    image: postgres:15-alpine3.20
+    env_file:
+      - .env
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7.2-alpine
+    env_file:
+      - .env
+    restart: unless-stopped
+
+volumes:
+  postgres_data:

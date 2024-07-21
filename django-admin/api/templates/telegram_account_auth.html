@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<head>
+    <title>Авторизация Telegram Аккаунта</title>
+</head>
+<body>
+    <h2>Авторизация Telegram Аккаунта</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Отправить</button>
+    </form>
+</body>

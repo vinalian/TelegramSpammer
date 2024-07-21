@@ -1,0 +1,37 @@
+{% extends "admin/change_form.html" %}
+
+{% block submit_buttons_bottom %}
+    {% if change %}
+        <button type="submit" class="button" name="_start-auth" id="auth-button">Авторизовать</button>
+    {% endif %}
+    <br>
+    <br>
+    <div id="default-buttons">
+        {{ block.super }}
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Получаем элементы
+            const isActiveCheckbox = document.getElementById('id_is_active');
+            const authButton = document.getElementById('auth-button');
+            const defaultButtons = document.getElementById('default-buttons');
+
+            // Функция для обновления видимости кнопок
+            function updateButtonsVisibility() {
+                if (isActiveCheckbox.checked) {
+                    authButton.style.display = 'inline-block';
+                    defaultButtons.style.display = 'none';
+                } else {
+                    authButton.style.display = 'none';
+                    defaultButtons.style.display = 'block';
+                }
+            }
+
+            // Обновляем видимость кнопок при загрузке страницы
+            updateButtonsVisibility();
+
+            // Добавляем обработчик события на изменение состояния чекбокса
+            isActiveCheckbox.addEventListener('change', updateButtonsVisibility);
+        });
+    </script>
+{% endblock %}

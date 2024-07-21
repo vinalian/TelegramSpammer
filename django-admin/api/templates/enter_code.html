@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<head>
+    <title>Введите Код Подтверждения</title>
+</head>
+<body>
+    <h2>Введите Код Подтверждения</h2>
+    <form method="post" action="{% url 'admin:confirm-code' %}">
+        {% csrf_token %}
+        <input type="hidden" name="account_id" value="{{ account_id }}">
+        <input type="hidden" name="phone_code_hash" value="{{ phone_code_hash }}">
+        <label for="phone_code">Код Подтверждения:</label>
+        <input type="text" name="phone_code" required>
+        <button type="submit">Отправить Код</button>
+    </form>
+</body>
